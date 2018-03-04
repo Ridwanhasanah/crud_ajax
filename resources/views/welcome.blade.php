@@ -16,7 +16,7 @@
     <link href="{{ asset('assets/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
 
     {{-- dataTables --}}
-    <link href="{{ asset('assets/datatables/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('assets/dataTables/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
 
       {{-- SweetAlert2 --}}
       <script src="{{ asset('assets/sweetalert2/sweetalert2.min.js') }}"></script>
@@ -140,12 +140,57 @@
                     ]
                   })
 
+      /*Tambah Data*/
       function addForm(){ /*function ini di taro di <a onclick="addForm()" class="btn btn-primary pull-right" style="margin-top: -8px;">Add Contact</a>*/
         save_method = "add"; /*ini menentukan url yang akan d gunakan*/
         $('input[name=_method]').val('POST'); /*Untuk input post yanad ada di modal form, method_field()*/
         $('#modal-form').modal('show');
         $('#modal-form form')[0].reset(); /*untuk mereset form input*/
         $('.modal-title').text('Add Contact'); /*untuk memberikan judul title kontak pada form h3 class="modal-title"></h3>*/
+      }
+
+      /*Edit Data*/
+      function editForm(id){
+        save_method = 'edit';
+        $('input[name=_method ]').val('PATCH');
+        $('#modal-form form')[0].reset();
+        $.ajax({
+          url: "{{url('contact')}}" + '/' + id + "/edit",
+          type: "GET",
+          dataType: "JSON",
+          success: function(data){
+            $('#modal-form').modal('show');
+            $('.modal-title').text('Edit Contact');
+
+            $('#id').val(data.id);
+            $('#name').val(data.name);
+            $('#email').val(data.email);
+          },
+          eror: function(){
+            alert("Nothing Data");
+          }
+        });
+      }
+
+      /*Delete Data*/
+      function deleteData(id){
+        var popup =  confirm("Are you sure for delete this data ?");
+        var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
+        if (popup == true) {
+          $.ajax({
+            url: "{{ url('contact') }}" + '/' + id,
+            type: "DELETE",
+            data: {'_mehtod' : 'DELETE', '_token' : csrf_token},
+            success: function(data){
+              table.ajax.reload();
+              console.log(data);
+            },
+            error: function(){
+              alert("Oops! Something Wrong!");
+            }
+          })
+        }
       }
 
       $(function(){
