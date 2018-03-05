@@ -41,42 +41,7 @@
 
   <body>
 
-    <!-- Fixed navbar -->
-    <nav class="navbar navbar-default navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Laravel Ajax</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-            <li class="dropdown">
-              <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
-              <ul class="dropdown-menu">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
-                <li role="separator" class="divider"></li>
-                <li class="dropdown-header">Nav header</li>
-                <li><a href="#">Separated link</a></li>
-                <li><a href="#">One more separated link</a></li>
-              </ul>
-            </li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li class="active"><a href="/">Fixed top <span class="sr-only">(current)</span></a></li>
-          </ul>
-        </div><!--/.nav-collapse -->
-      </div>
-    </nav>
+    
 
     <div class="container">
 
@@ -174,23 +139,40 @@
 
       /*Delete Data*/
       function deleteData(id){
-        var popup =  confirm("Are you sure for delete this data ?");
         var csrf_token = $('meta[name="csrf-token"]').attr('content');
 
-        if (popup == true) {
+        swal({
+          title: 'Are you sure ?',
+          tesxt: "You won't be able to revert this!",
+          type: 'warning',
+          showCancelButton: true,
+          cancelButtonColor: '#d33',
+          confirmButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, Delete it!'
+        }).then(function(){
           $.ajax({
             url: "{{ url('contact') }}" + '/' + id,
             type: "DELETE",
             data: {'_mehtod' : 'DELETE', '_token' : csrf_token},
             success: function(data){
               table.ajax.reload();
-              console.log(data);
+              swal({
+                title: 'Success',
+                text: 'Data has been deleted',
+                type: 'success',
+                timer: '1500'
+              })
             },
             error: function(){
-              alert("Oops! Something Wrong!");
+              swal({
+                title: 'Oops ...',
+                text: 'Something went wrong',
+                type: 'error',
+                timer: '1500'
+              })
             }
           })
-        }
+        })
       }
 
       $(function(){
@@ -207,9 +189,19 @@
               success : function($data){
                 $('#modal-form').modal('hide');
                 table.ajax.reload()
+                swal({
+                title: 'Success',
+                type: 'success',
+                timer: '1500'
+              })
               },
               error : function(){
-                alert(' Oops! Something error!');
+                swal({
+                title: 'Oops ...',
+                text: 'Something went wrong',
+                type: 'error',
+                timer: '1500'
+              })
               }
             });
             return false;
